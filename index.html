@@ -8,13 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
+
+<body>
     
 <audio id="finish-sound">
     <source src="finish.mp3" type="audio/mpeg">
 </audio>
-
-<body>
-
+    
 <div class="phone-mockup">
 
     <!-- HEADER -->
@@ -159,27 +159,32 @@
 
     function startTimer() {
         if (timerInterval) return;
+    
         timerInterval = setInterval(() => {
             if (!isPaused) {
                 totalSeconds--;
                 timerDisplay.textContent = formatTime(totalSeconds);
                 updateProgress();
-
+    
                 if (totalSeconds <= 0) {
-                clearInterval(timerInterval);
-                timerInterval = null;
+                    clearInterval(timerInterval);
+                    timerInterval = null;
     
-                // PUTAR SUARA
-                const sound = document.getElementById('finish-sound');
-                if (sound) {
-                    sound.play();
+                    // Putar suara
+                    const sound = document.getElementById('finish-sound');
+                    if (sound) {
+                        sound.play();
+                    }
+    
+                    // Tunggu 2 detik lalu masuk tahap selesai
+                    setTimeout(() => {
+                        celebrateCompletion();
+                    }, 2000);
                 }
-    
-                // TUNGGU 2 DETIK BARU MASUK TAHAP SELESAI
-                setTimeout(() => {
-                    celebrateCompletion();
-            }, 2000);
+            }
+        }, 1000);
     }
+
 
 
     function celebrateCompletion() {
@@ -278,11 +283,12 @@
     // Stop / Selesai manual
     stopBtn.addEventListener('click', () => {
         if (confirm('Yakin ingin mengakhiri sesi ini?\n\n(OK = anggap selesai, Cancel = lanjut timer)')) {
-            // Anggap selesai → celebrate!
+            clearInterval(timerInterval);
+            timerInterval = null;
             celebrateCompletion();
         }
-        // Jika cancel → tidak perlu lakukan apa-apa, timer tetap jalan
     });
+
 
     // Tombol Mulai Lagi di screen selesai
     document.addEventListener('click', function(e) {
@@ -301,6 +307,7 @@
 
 </body>
 </html>
+
 
 
 
