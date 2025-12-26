@@ -100,10 +100,39 @@
     screenDone.id = 'screen-done';
     screenDone.className = 'screen';
     screenDone.innerHTML = `
-        <h2 style="color:#4caf50; font-size:2em;">Selamat! 🎉</h2>
-        <p style="font-size:1.2em; margin:20px 0;">Kamu berhasil menyelesaikan:</p>
-        <div id="done-task" style="font-weight:700; font-size:1.3em; color:#333; margin:20px 0;"></div>
-        <button class="btn-primary" id="restart-btn">Mulai Lagi</button>
+        <div class="done-wrapper">
+    
+            <h2 class="done-title">Kamu Berhasil 🎉</h2>
+            <p class="done-subtitle">
+                Satu langkah kecil sudah kamu selesaikan hari ini.
+            </p>
+    
+            <div class="done-card">
+                <p class="done-label">Target yang diselesaikan</p>
+                <div id="done-task" class="done-task"></div>
+    
+                <div class="done-info">
+                    <div>
+                        <span class="info-value" id="done-duration"></span>
+                        <span class="info-label">Menit Fokus</span>
+                    </div>
+                    <div>
+                        <span class="info-value" id="done-session"></span>
+                        <span class="info-label">Sesi Hari Ini</span>
+                    </div>
+                </div>
+            </div>
+    
+            <p class="done-quote">
+                “Konsistensi kecil mengalahkan niat besar yang jarang dilakukan.”
+            </p>
+    
+            <div class="done-actions">
+                <button class="btn-primary" id="restart-btn">Mulai 1 Hal Lagi</button>
+                <button class="btn-secondary" id="finish-btn">Cukup untuk Hari Ini</button>
+            </div>
+    
+        </div>
     `;
     document.querySelector('.phone-mockup').appendChild(screenDone);
 
@@ -275,6 +304,7 @@
 
 </body>
 </html>
+
 
 
 
