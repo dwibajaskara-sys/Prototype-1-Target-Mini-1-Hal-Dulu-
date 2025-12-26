@@ -42,6 +42,7 @@
         <div class="duration-select">
             <label>Pilih Durasi Fokus</label>
             <select id="duration-select">
+                <option value="30">30 Detik (Testing)</option>
                 <option value="15">15 Menit (Quick Start)</option>
                 <option value="25" selected>25 Menit (Pomodoro Klasik)</option>
                 <option value="40">40 Menit (Deep Work)</option>
@@ -86,11 +87,25 @@
         "Fokus pada progress, bukan perfection.",
         "Satu langkah kecil hari ini, satu lompatan besar besok.",
         "Kamu lebih kuat dari yang kamu kira.",
-        "Setiap menit fokus adalah investasi untuk masa depanmu."
+        "Setiap menit fokus adalah investasi untuk masa depanmu.",
+        "Keren! Satu tugas lagi selesai hari ini! 🔥",
+        "Kamu sedang membangun kebiasaan hebat, lanjutkan!"
     ];
 
+    // DOM Elements
     const screenInput = document.getElementById('screen-input');
     const screenFocus = document.getElementById('screen-focus');
+    const screenDone = document.createElement('div'); // Kita buat dinamis
+    screenDone.id = 'screen-done';
+    screenDone.className = 'screen';
+    screenDone.innerHTML = `
+        <h2 style="color:#4caf50; font-size:2em;">Selamat! 🎉</h2>
+        <p style="font-size:1.2em; margin:20px 0;">Kamu berhasil menyelesaikan:</p>
+        <div id="done-task" style="font-weight:700; font-size:1.3em; color:#333; margin:20px 0;"></div>
+        <button class="btn-primary" id="restart-btn">Mulai Lagi</button>
+    `;
+    document.querySelector('.phone-mockup').appendChild(screenDone);
+
     const targetInput = document.getElementById('target-input');
     const durationSelect = document.getElementById('duration-select');
     const currentTask = document.getElementById('current-task');
@@ -101,7 +116,6 @@
     const startBtn = document.getElementById('start-focus');
     const pauseBtn = document.getElementById('pause-btn');
     const stopBtn = document.getElementById('stop-btn');
-
     const stepTarget = document.getElementById('step-target');
     const stepFocus = document.getElementById('step-focus');
     const stepDone = document.getElementById('step-done');
@@ -110,6 +124,7 @@
     let initialMinutes = 25;
     let timerInterval = null;
     let isPaused = false;
+    let currentTaskText = "";
 
     function formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
@@ -125,7 +140,6 @@
 
     function startTimer() {
         if (timerInterval) return;
-
         timerInterval = setInterval(() => {
             if (!isPaused) {
                 totalSeconds--;
@@ -135,11 +149,33 @@
                 if (totalSeconds <= 0) {
                     clearInterval(timerInterval);
                     timerInterval = null;
-                    alert("Waktu habis! Kamu luar biasa! 🎉");
-                    stopFocus();
+                    celebrateCompletion();
                 }
             }
         }, 1000);
+    }
+
+    function celebrateCompletion() {
+        // Confetti!
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+
+        // Tampilkan pesan besar
+        motivationQuote.innerHTML = `<strong style="color:#4caf50; font-size:1.4em;">Keren banget! Target selesai! 🔥</strong>`;
+        
+        // Pindah ke screen selesai
+        setTimeout(() => {
+            screenFocus.classList.remove('active');
+            screenDone.classList.add('active');
+            document.getElementById('done-task').textContent = currentTaskText;
+            
+            stepTarget.classList.remove('active');
+            stepFocus.classList.remove('active');
+            stepDone.classList.add('active');
+        }, 1200);
     }
 
     function pauseTimer() {
@@ -147,7 +183,7 @@
         pauseBtn.textContent = isPaused ? 'Lanjut' : 'Pause';
     }
 
-    function stopFocus() {
+    function resetToInput() {
         clearInterval(timerInterval);
         timerInterval = null;
         totalSeconds = initialMinutes * 60;
@@ -157,6 +193,7 @@
         pauseBtn.textContent = 'Pause';
 
         screenFocus.classList.remove('active');
+        screenDone.classList.remove('active');
         screenInput.classList.add('active');
 
         stepTarget.classList.add('active');
@@ -164,6 +201,7 @@
         stepDone.classList.remove('active');
     }
 
+    // Start button
     startBtn.addEventListener('click', () => {
         const task = targetInput.value.trim();
         if (!task) {
@@ -171,7 +209,7 @@
             return;
         }
 
-        // Ambil durasi yang dipilih
+        currentTaskText = task;
         initialMinutes = parseInt(durationSelect.value);
         totalSeconds = initialMinutes * 60;
 
@@ -181,28 +219,40 @@
         statusFocus.textContent = `Mode Fokus Aktif • ${initialMinutes} Menit`;
         updateProgress();
 
-        // Pindah ke layar fokus
+        // Switch screen
         screenInput.classList.remove('active');
         screenFocus.classList.add('active');
+        screenDone.classList.remove('active');
 
         stepTarget.classList.remove('active');
         stepFocus.classList.add('active');
+        stepDone.classList.remove('active');
 
-        // Mulai timer
         startTimer();
     });
 
+    // Pause / Resume
     pauseBtn.addEventListener('click', pauseTimer);
 
+    // Stop / Selesai manual
     stopBtn.addEventListener('click', () => {
-        if (confirm('Yakin ingin mengakhiri sesi fokus?')) {
-            stopFocus();
-            stepFocus.classList.remove('active');
-            stepDone.classList.add('active');
+        if (confirm('Yakin ingin mengakhiri sesi ini?\n\n(OK = anggap selesai, Cancel = lanjut timer)')) {
+            // Anggap selesai → celebrate!
+            celebrateCompletion();
+        }
+        // Jika cancel → tidak perlu lakukan apa-apa, timer tetap jalan
+    });
+
+    // Tombol Mulai Lagi di screen selesai
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'restart-btn') {
+            targetInput.value = "";
+            resetToInput();
         }
     });
 </script>
 
 </body>
 </html>
+
 
