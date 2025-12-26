@@ -43,7 +43,7 @@
         <div class="duration-select">
             <label>Pilih Durasi Fokus</label>
             <select id="duration-select">
-                <option value="1">1 Menit (Testing)</option>
+                <option value="0,5">30 Detik (Testing)</option>
                 <option value="15">15 Menit (Quick Start)</option>
                 <option value="25" selected>25 Menit (Pomodoro Klasik)</option>
                 <option value="40">40 Menit (Deep Work)</option>
@@ -157,6 +157,10 @@
     }
 
     function celebrateCompletion() {
+        let sessionCount = localStorage.getItem("sessionCount") || 0;
+        sessionCount++;
+        localStorage.setItem("sessionCount", sessionCount);
+
         // Confetti!
         confetti({
             particleCount: 100,
@@ -182,6 +186,9 @@
     function pauseTimer() {
         isPaused = !isPaused;
         pauseBtn.textContent = isPaused ? 'Lanjut' : 'Pause';
+        statusFocus.textContent = isPaused
+            ? "Timer Dijeda"
+            : `Mode Fokus Aktif • ${initialMinutes} Menit`;
     }
 
     function resetToInput() {
@@ -193,6 +200,9 @@
         isPaused = false;
         pauseBtn.textContent = 'Pause';
 
+        startBtn.disabled = false;
+        startBtn.style.opacity = "1";
+        
         screenFocus.classList.remove('active');
         screenDone.classList.remove('active');
         screenInput.classList.add('active');
@@ -211,7 +221,8 @@
         }
 
         currentTaskText = task;
-        initialMinutes = parseInt(durationSelect.value);
+        localStorage.setItem("lastTarget", task);
+        initialMinutes = parseFloat(durationSelect.value);
         totalSeconds = initialMinutes * 60;
 
         currentTask.textContent = task;
@@ -230,6 +241,9 @@
         stepDone.classList.remove('active');
 
         startTimer();
+
+        startBtn.disabled = true;
+        startBtn.style.opacity = "0.6";
     });
 
     // Pause / Resume
@@ -251,10 +265,17 @@
             resetToInput();
         }
     });
+
+    const savedTarget = localStorage.getItem("lastTarget");
+    if (savedTarget) {
+        targetInput.value = savedTarget;
+    }
+
 </script>
 
 </body>
 </html>
+
 
 
 
