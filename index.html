@@ -12,7 +12,7 @@
 <body>
     
 <audio id="finish-sound">
-    <source src="finish.mp3" type="audio/mpeg">
+    <audio id="finish-sound" preload="auto"></audio>
 </audio>
     
 <div class="phone-mockup">
@@ -48,7 +48,7 @@
         <div class="duration-select">
             <label>Pilih Durasi Fokus</label>
             <select id="duration-select">
-                <option value="0.5">30 Detik (Testing)</option>
+                <option value="0.16">30 Detik (Testing)</option>
                 <option value="15">15 Menit (Quick Start)</option>
                 <option value="25" selected>25 Menit (Pomodoro Klasik)</option>
                 <option value="40">40 Menit (Deep Work)</option>
@@ -245,6 +245,14 @@
 
     // Start button
     startBtn.addEventListener('click', () => {
+        const sound = document.getElementById('finish-sound');
+        sound.src = "finish.mp3";
+        sound.volume = 1;
+        sound.play().then(() => {
+            sound.pause();
+            sound.currentTime = 0;
+        });
+        
         const task = targetInput.value.trim();
         if (!task) {
             alert('Isi target kecil dulu ya!');
@@ -307,6 +315,7 @@
 
 </body>
 </html>
+
 
 
 
