@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
+    
+<audio id="finish-sound">
+    <source src="finish.mp3" type="audio/mpeg">
+</audio>
+
 <body>
 
 <div class="phone-mockup">
@@ -106,7 +111,8 @@
             <p class="done-subtitle">
                 Satu langkah kecil sudah kamu selesaikan hari ini.
             </p>
-    
+                
+            <p class="done-task-text" id="done-task"></p>
             <p class="done-quote">
                 “Konsistensi kecil mengalahkan niat besar yang jarang dilakukan.”
             </p>
@@ -160,13 +166,21 @@
                 updateProgress();
 
                 if (totalSeconds <= 0) {
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    celebrateCompletion();
+                clearInterval(timerInterval);
+                timerInterval = null;
+    
+                // PUTAR SUARA
+                const sound = document.getElementById('finish-sound');
+                if (sound) {
+                    sound.play();
                 }
-            }
-        }, 1000);
+    
+                // TUNGGU 2 DETIK BARU MASUK TAHAP SELESAI
+                setTimeout(() => {
+                    celebrateCompletion();
+            }, 2000);
     }
+
 
     function celebrateCompletion() {
         let sessionCount = localStorage.getItem("sessionCount") || 0;
@@ -287,6 +301,7 @@
 
 </body>
 </html>
+
 
 
 
